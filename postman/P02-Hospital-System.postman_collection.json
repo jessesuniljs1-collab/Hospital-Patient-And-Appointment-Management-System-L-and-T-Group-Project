@@ -1,8 +1,8 @@
 {
   "info": {
-    "_postman_id": "p02-hospital-management-system-cia3",
-    "name": "P02 Hospital Patient & Appointment Management System",
-    "description": "Comprehensive Postman API collection for Christ University CIA-3 evaluation covering all 13 modules, RBAC, business conflict detection, status workflow, prescriptions, billing, and reports.",
+    "_postman_id": "hospital-patient-and-appointment-management-system",
+    "name": "Hospital Patient & Appointment Management System",
+    "description": "Comprehensive Postman API collection covering authentication, departments, doctors, availability, appointments, workflow, prescriptions, billing, notifications, and reports.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [

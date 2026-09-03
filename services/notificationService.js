@@ -2,7 +2,7 @@ const Notification = require('../models/Notification');
 
 /**
  * Notification service — creates notification records for appointment events.
- * No real SMS/email; records only, as per P02 specification.
+ * In-app notification records for appointments, status updates, and reminders.
  */
 const notificationService = {
   /**

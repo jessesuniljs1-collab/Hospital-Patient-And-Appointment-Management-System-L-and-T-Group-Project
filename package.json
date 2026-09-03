@@ -1,7 +1,7 @@
 {
-  "name": "p02-hospital-management-system",
+  "name": "hospital-patient-and-appointment-management-system",
   "version": "1.0.0",
-  "description": "P02 — Hospital Patient & Appointment Management System for Christ University CIA-3",
+  "description": "Hospital patient and appointment management system built with Node.js, Express.js, MongoDB, and Mongoose.",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",

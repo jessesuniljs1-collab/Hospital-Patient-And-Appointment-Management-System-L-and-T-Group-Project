@@ -1,9 +1,9 @@
-// Live End-to-End API Verification Script for MediPulse P02
+// Live End-to-End API Verification Script for Hospital Patient & Appointment Management System
 const BASE_URL = 'http://localhost:5000/api';
 
 const runVerification = async () => {
   console.log('\n🏥 ====================================================');
-  console.log('   P02 HOSPITAL MANAGEMENT SYSTEM — LIVE API VERIFICATION');
+  console.log('   HOSPITAL MANAGEMENT SYSTEM — LIVE API VERIFICATION');
   console.log('====================================================\n');
 
   let passed = 0;

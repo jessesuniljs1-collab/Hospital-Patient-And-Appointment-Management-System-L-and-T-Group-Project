@@ -104,7 +104,7 @@ function switchTab(viewId) {
   if (viewId === 'adminTab') loadAdminReports();
 }
 
-// Quick 1-Click Login for Evaluators
+// Quick 1-Click Demo Login
 async function quickLogin(email, password) {
   try {
     const res = await fetch(`${API_BASE}/auth/login`, {
