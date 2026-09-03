@@ -4,65 +4,23 @@ A full-stack hospital patient and appointment management system built with Node.
 
 ---
 
-## Quick Start
-
-```bash
-# 1. Clone the repository
-git clone https://github.com/jessesuniljs1-collab/Hospital-Patient-And-Appointment-Management-System-L-and-T-Group-Project.git
-cd Hospital-Patient-And-Appointment-Management-System-L-and-T-Group-Project
-
-# 2. Install dependencies
-npm install
-
-# 3. Configure environment
-# On Windows (cmd): copy .env.example .env
-# On Windows (PowerShell): Copy-Item .env.example .env
-# On macOS / Linux: cp .env.example .env
-
-# 4. Seed demonstration accounts and data
-npm run seed
-
-# 5. Start the application
-npm start
-```
-
-Once running, access:
-- **Web Application:** [http://localhost:5000/](http://localhost:5000/)
-- **API Base:** [http://localhost:5000/api](http://localhost:5000/api)
-- **Health Check:** [http://localhost:5000/api/health](http://localhost:5000/api/health)
-
----
-
-## Project Overview
-
-Modern healthcare facilities require coordinated scheduling to prevent overlapping doctor bookings, track patient visits, manage medical notes, and streamline administrative reporting. 
-
-This application provides an integrated solution connecting three key user groups:
-- **Patients** register, find specialists by department or specialization, view weekly availability, and book appointments without scheduling conflicts.
-- **Doctors** maintain weekly working hours, confirm booked appointments, mark visits as completed, issue digital prescriptions, and review relevant patient medical notes.
-- **Administrators** manage hospital departments and doctor profiles, track consultation billing statuses, and generate operational reports on appointment volumes, department workloads, and doctor utilization.
-
-The backend is built as a RESTful API powered by Express.js and Mongoose, enforcing schema validation, role-based authorization, and business rules at every layer. The frontend delivers a responsive single-page web interface with real-time feedback, status tracking, and quick-login demonstration tools.
-
----
-
 ## Features
 
-- **Patient Registration & Authentication:** Secure account creation with bcrypt password hashing and JSON Web Token (JWT) sessions.
-- **Doctor & Department Management:** Structured medical departments and doctor profiles with qualifications, experience, and consultation fees.
-- **Weekly Doctor Availability:** Day-of-week working slots configured per doctor, preventing internal slot overlap.
-- **Conflict-Free Appointment Booking:** Real-time overlap detection preventing double-booking for the same doctor at the same date and time.
-- **Controlled Status Lifecycle:** Strict status transitions (`Booked` → `Confirmed` → `Completed` / `Cancelled` / `No-show`) with role permission checks.
-- **Digital Prescriptions:** Structured medication lists, dosage, frequency, and diagnosis issued exclusively for completed appointments.
-- **Patient Medical History:** Protected chronological visit history, prescriptions, and notes accessible only by the owning patient, attending doctor, or administrator.
-- **Department & Specialist Directory:** Publicly browsable department listings and doctor profiles with specialization search.
-- **In-App Notifications & Reminders:** Event-driven notification records generated on booking, confirmation, completion, cancellation, and prescription issuance.
-- **Consultation Billing:** Automatic billing record generation upon visit completion, supporting payment status updates.
-- **Administrative Aggregation Reports:** MongoDB aggregation pipelines summarizing appointment metrics, department distribution, and doctor utilization.
-- **Role-Based Access Control (RBAC):** Granular endpoint protection ensuring users only access permitted operations and data.
-- **Interactive Browser Interface:** Clean, responsive frontend for all roles with quick demo switching and real-time updates.
-- **Automated Integration Tests:** Comprehensive test suite with 40 integration tests covering authentication, scheduling conflicts, status transitions, ownership, and reports.
-- **Postman API Collection:** Ready-to-import Postman collection covering all resources and workflows.
+- **Patient Registration & Authentication:** Secure patient registration and login using bcrypt password hashing and JSON Web Tokens (JWT).
+- **Doctor & Department Management:** Hospital departments and doctor profiles with qualifications, experience, and consultation fees.
+- **Weekly Doctor Availability:** Day-of-week working hours per doctor, with internal validation preventing overlapping slots on the same day.
+- **Conflict-Free Appointment Booking:** Booking engine with real-time overlap detection preventing double bookings for doctors.
+- **Appointment Status Lifecycle:** Controlled status progression (`Booked` → `Confirmed` → `Completed` / `Cancelled` / `No-show`).
+- **Digital Prescriptions:** Electronic prescription records linked to completed appointments with medication details, dosage, and diagnosis.
+- **Patient Medical History:** Protected chronological history of appointments and prescriptions with user ownership checks.
+- **Department & Doctor Directory:** Publicly browsable department listings and doctor search filtered by specialization or department.
+- **Notifications & Reminders:** Event-driven in-app notifications generated for bookings, confirmations, cancellations, completions, and prescriptions.
+- **Consultation Billing:** Automatic billing record creation upon appointment completion, supporting payment status updates.
+- **Administrative Reports:** MongoDB aggregation reports summarizing appointment metrics, department workloads, and doctor utilization.
+- **Role-Based Access Control (RBAC):** Middleware-level authorization protecting routes for `Patient`, `Doctor`, and `Admin` roles.
+- **Interactive Web Interface:** Single-page frontend with responsive layouts, modal workflows, and demo switching tools.
+- **Integration Test Suite:** 40 automated Jest integration tests covering all critical backend services and business rules.
+- **Postman API Collection:** Pre-configured collection for testing and verifying all API endpoints.
 
 ---
 
@@ -70,9 +28,38 @@ The backend is built as a RESTful API powered by Express.js and Mongoose, enforc
 
 | Role | Permissions & Capabilities |
 | :--- | :--- |
-| **Patient** | • Register personal account and manage demographic profile<br>• Browse hospital departments and search specialists<br>• Check doctor availability and book non-conflicting appointments<br>• View personal appointments and cancel upcoming bookings<br>• Access personal prescriptions and chronological medical history<br>• View billing records and personal notification feed |
-| **Doctor** | • Manage weekly availability slots (day of week, start and end times)<br>• View assigned patient appointments<br>• Update appointment status (`Confirmed`, `Completed`, `Cancelled`, `No-show`)<br>• Issue digital prescriptions for completed visits<br>• View clinical notes and medical history for assigned patients |
-| **Admin** | • Create and manage hospital departments<br>• Create, update, and manage doctor profiles<br>• View all system appointments across doctors and departments<br>• Update consultation billing payment statuses (`Pending` → `Paid`)<br>• Generate hospital analytics reports (daily/weekly appointments, department load, doctor utilization) |
+| **Patient** | • Create an account and manage profile details<br>• Search doctors by specialization and department<br>• View doctor availability and book appointments without conflicts<br>• View personal appointments and cancel upcoming bookings<br>• View personal prescriptions and medical history<br>• View billing records and notifications |
+| **Doctor** | • Manage weekly availability slots (weekday, start time, end time)<br>• View assigned patient appointments<br>• Confirm and complete appointments<br>• Issue digital prescriptions for completed visits<br>• View permitted patient medical details |
+| **Admin** | • Manage hospital departments (create, update, delete)<br>• Manage doctor profiles and assignments<br>• View all hospital appointments<br>• Update billing payment statuses (`Pending` → `Paid`)<br>• View administrative analytics reports |
+
+---
+
+## Quick Start
+
+```bash
+# Clone the repository
+git clone https://github.com/jessesuniljs1-collab/Hospital-Patient-And-Appointment-Management-System-L-and-T-Group-Project.git
+cd Hospital-Patient-And-Appointment-Management-System-L-and-T-Group-Project
+
+# Install dependencies
+npm install
+
+# Configure environment variables
+# Windows (CMD): copy .env.example .env
+# Windows (PowerShell): Copy-Item .env.example .env
+# macOS / Linux: cp .env.example .env
+
+# Seed demonstration data
+npm run seed
+
+# Start the application
+npm start
+```
+
+Access points:
+- **Frontend Application:** [http://localhost:5000/](http://localhost:5000/)
+- **API Base URL:** [http://localhost:5000/api](http://localhost:5000/api)
+- **Health Endpoint:** [http://localhost:5000/api/health](http://localhost:5000/api/health)
 
 ---
 
@@ -80,249 +67,185 @@ The backend is built as a RESTful API powered by Express.js and Mongoose, enforc
 
 - **Node.js:** v18.0.0 or higher
 - **npm:** v9.0.0 or higher
-- **MongoDB:** v5.0+ local / cloud instance (or the built-in development fallback)
-- **Git:** v2.30+
+- **MongoDB:** v5.0+ or the built-in development fallback
+- **Git:** v2.30 or higher
 
 ---
 
 ## Installation
 
-1. **Clone the repository:**
+1. Clone the repository:
    ```bash
    git clone https://github.com/jessesuniljs1-collab/Hospital-Patient-And-Appointment-Management-System-L-and-T-Group-Project.git
    cd Hospital-Patient-And-Appointment-Management-System-L-and-T-Group-Project
    ```
 
-2. **Install project dependencies:**
+2. Install dependencies:
    ```bash
    npm install
-   ```
-
-3. **Configure environment variables:**
-   Copy `.env.example` to create your local `.env` file:
-   ```bash
-   # Windows Command Prompt
-   copy .env.example .env
-
-   # Windows PowerShell
-   Copy-Item .env.example .env
-
-   # macOS / Linux
-   cp .env.example .env
    ```
 
 ---
 
 ## Environment Variables
 
-Configure your local `.env` file with the following parameters:
+Copy `.env.example` to `.env` and configure variables as needed:
 
 | Variable | Default Value | Description |
 | :--- | :--- | :--- |
-| `PORT` | `5000` | Port number on which the Express server listens |
-| `MONGO_URI` | `mongodb://localhost:27017/hospital_management` | MongoDB connection URI |
-| `JWT_SECRET` | `your_jwt_secret_key_change_in_production` | Secret key used to sign and verify JWT tokens |
-| `JWT_EXPIRES_IN` | `1d` | Expiration lifespan of issued JWT authentication tokens |
-| `NODE_ENV` | `development` | Runtime environment mode (`development` or `production`) |
+| `PORT` | `5000` | Port on which the HTTP server listens |
+| `MONGO_URI` | `mongodb://localhost:27017/hospital_management` | MongoDB connection connection string |
+| `JWT_SECRET` | `your_jwt_secret_key_change_in_production` | Secret key for signing JSON Web Tokens |
+| `JWT_EXPIRES_IN` | `1d` | Expiration window for issued JWT tokens |
+| `NODE_ENV` | `development` | Application environment (`development` or `production`) |
 
 ---
 
 ## Database Setup
 
-The application connects to MongoDB using `MONGO_URI` configured in `.env`.
+The application connects to MongoDB using `MONGO_URI` defined in `.env`.
 
-### Standard Setup
-Ensure a MongoDB instance is running locally on port 27017 or provide a MongoDB Atlas connection string in your `.env` file:
-```env
-MONGO_URI=mongodb://localhost:27017/hospital_management
-```
-
-### Development Fallback
-In development mode (`NODE_ENV=development`), if no running MongoDB server is detected on the configured URI, `config/db.js` automatically starts an embedded, in-memory MongoDB engine (`mongodb-memory-server`). This allows local testing and exploration without requiring a pre-installed database server.
+- **Standard MongoDB:** Connects to any local or remote MongoDB instance (e.g., `mongodb://localhost:27017/hospital_management`).
+- **Development Fallback:** In development mode (`NODE_ENV=development`), if no running MongoDB server is detected at `MONGO_URI`, `config/db.js` automatically initializes an embedded in-memory MongoDB instance (`mongodb-memory-server`). This allows local testing without a pre-installed database service.
 
 ---
 
 ## Seed Data
 
-Populate the database with demo departments, doctors with weekly availability, patient records, appointments across multiple statuses, prescriptions, billing records, and notifications:
+Populate the database with sample departments, doctors, availability schedules, patients, visits, prescriptions, billing records, and notifications:
 
 ```bash
 npm run seed
 ```
 
-### Demonstration Accounts
+### Demo Accounts
 
 | Role | Email | Password | Details |
 | :--- | :--- | :--- | :--- |
 | **Admin** | `admin@hospital.com` | `Admin@123` | System Administrator |
 | **Doctor** | `dr.sharma@hospital.com` | `Doctor@123` | Dr. Rajesh Sharma (Cardiology) |
 | **Doctor** | `dr.patel@hospital.com` | `Doctor@123` | Dr. Priya Patel (Neurology) |
-| **Patient** | `patient1@example.com` | `Patient@123` | John Doe (Blood Group O+) |
-| **Patient** | `patient2@example.com` | `Patient@123` | Sarah Smith (Blood Group B+) |
-
----
-
-## Running the Application
-
-### Start Production Server
-```bash
-npm start
-```
-
-### Start Development Server (with Auto-Reload)
-```bash
-npm run dev
-```
-
-### Run Integration Tests
-```bash
-npm test
-```
-
-### Run Live API Verification
-With the server running on port 5000:
-```bash
-npm run verify
-```
+| **Patient** | `patient1@example.com` | `Patient@123` | John Doe |
+| **Patient** | `patient2@example.com` | `Patient@123` | Sarah Smith |
 
 ---
 
 ## Demo
 
-Follow this walkthrough to experience the complete clinical and administrative workflow:
+Follow this workflow to test the end-to-end system:
 
-```
-Sign In (Patient) ──► Search Specialist ──► Book Appointment
-                                                  │
-                                                  ▼
-View Reports ◄── Update Billing ◄── Issue Prescription ◄── Confirm & Complete
-   (Admin)          (Admin)             (Doctor)              (Doctor)
-```
-
-1. **Launch the Application:** Run `npm start` and open [http://localhost:5000/](http://localhost:5000/) in your browser.
-2. **Search Doctors:** Click on **Doctors** to browse specialists or filter by specialization (e.g., *Cardiology*).
-3. **Sign In as Patient:** Use the **Quick Demo Login** banner and select `🧑 John Doe (Patient 1)`.
-4. **Book an Appointment:** Select an available doctor, pick a date, choose an available time slot, and confirm booking.
-5. **Switch to Doctor:** Click `🩺 Dr. Sharma (Cardio)`. Navigate to **Doctor Desk** to see the new booking.
-6. **Confirm & Complete Visit:** Update status to `Confirmed`, then transition to `Completed`.
-7. **Issue Digital Prescription:** Fill in diagnosis, medications, dosage, frequency, and submit.
-8. **Review History & Billing:** Switch back to Patient or open **Medical History** to view the generated prescription, visit record, and pending consultation fee.
-9. **Administrative Oversight:** Click `🔑 Admin` and open **Admin & Reports** to inspect live appointment charts, department workload, and update the billing payment status to `Paid`.
+1. **Start the server:** Run `npm start` and open [http://localhost:5000/](http://localhost:5000/).
+2. **Search doctors:** Browse specialists on the landing page or filter by specialization.
+3. **Sign in as Patient:** Click `🧑 John Doe (Patient 1)` in the quick demo banner.
+4. **Book an appointment:** Choose a doctor, pick a date and an available time slot, and submit.
+5. **Sign in as Doctor:** Switch to `🩺 Dr. Sharma (Cardio)`, go to **Doctor Desk**, confirm the booking, and mark it `Completed`.
+6. **Issue prescription:** In Doctor Desk, enter medications and diagnosis for the completed visit.
+7. **View patient history & billing:** Switch back to Patient to review the issued prescription, updated medical history, and generated consultation invoice.
+8. **Admin reports & billing:** Switch to `🔑 Admin` to view aggregation analytics under **Admin & Reports** and mark billing as `Paid`.
 
 ---
 
 ## API Documentation
 
-All protected endpoints require a valid JWT token passed in the `Authorization` header:
-`Authorization: Bearer <token>`
+Protected routes require: `Authorization: Bearer <token>`
 
 ### Authentication (`/api/auth`)
-
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/auth/register` | Public | Register a new patient account |
-| `POST` | `/api/auth/login` | Public | Authenticate user and receive JWT token |
-| `GET` | `/api/auth/me` | Authenticated | Retrieve authenticated user details |
+| `POST` | `/api/auth/register` | Public | Register new patient account |
+| `POST` | `/api/auth/login` | Public | Authenticate user and receive JWT |
+| `GET` | `/api/auth/me` | Authenticated | Get current authenticated user |
 
 ### Departments (`/api/departments`)
-
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/departments` | Public | List all active hospital departments |
-| `GET` | `/api/departments/:id` | Public | Get single department by ID |
-| `POST` | `/api/departments` | Admin | Create a new department |
+| `GET` | `/api/departments` | Public | List active hospital departments |
+| `GET` | `/api/departments/:id` | Public | Get department details |
+| `POST` | `/api/departments` | Admin | Create hospital department |
 | `PUT` | `/api/departments/:id` | Admin | Update department details |
-| `DELETE` | `/api/departments/:id` | Admin | Deactivate or delete department |
+| `DELETE` | `/api/departments/:id` | Admin | Deactivate department |
 
 ### Doctors (`/api/doctors`)
-
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/doctors` | Public | List and search doctors by specialization or department |
-| `GET` | `/api/doctors/:id` | Public | Get doctor profile and weekly availability |
-| `POST` | `/api/doctors` | Admin | Register a new doctor profile |
-| `PUT` | `/api/doctors/:id` | Admin / Doctor | Update doctor details |
-| `PUT` | `/api/doctors/:id/availability` | Admin / Doctor | Update doctor weekly availability schedule |
+| `GET` | `/api/doctors` | Public | Search doctors by specialization/department |
+| `GET` | `/api/doctors/:id` | Public | Get doctor profile and availability |
+| `POST` | `/api/doctors` | Admin | Create doctor profile |
+| `PUT` | `/api/doctors/:id` | Admin / Doctor | Update doctor profile |
+| `PUT` | `/api/doctors/:id/availability` | Admin / Doctor | Update doctor weekly availability slots |
 | `DELETE` | `/api/doctors/:id` | Admin | Remove doctor profile |
 
 ### Appointments (`/api/appointments`)
-
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/appointments` | Patient / Admin | Book a new appointment with conflict detection |
+| `POST` | `/api/appointments` | Patient / Admin | Book appointment with conflict checking |
 | `GET` | `/api/appointments` | Authenticated | List appointments (filtered by user role) |
-| `GET` | `/api/appointments/:id` | Authenticated | Get appointment details by ID |
-| `PATCH` | `/api/appointments/:id/status` | Authenticated | Update appointment status with transition validation |
+| `GET` | `/api/appointments/:id` | Authenticated | Get appointment details |
+| `PATCH` | `/api/appointments/:id/status` | Authenticated | Update status (`Confirmed`, `Completed`, etc.) |
 
 ### Prescriptions (`/api/prescriptions`)
-
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
-| `POST` | `/api/prescriptions` | Doctor | Issue prescription for a completed appointment |
-| `GET` | `/api/prescriptions/:id` | Authenticated | Get prescription details by ID |
-| `GET` | `/api/prescriptions/appointment/:appointmentId` | Authenticated | Get prescription for a specific appointment |
-| `GET` | `/api/prescriptions/patient/:patientId` | Authenticated | Get all prescriptions for a patient (ownership protected) |
+| `POST` | `/api/prescriptions` | Doctor | Issue prescription for completed visit |
+| `GET` | `/api/prescriptions/:id` | Authenticated | Get prescription by ID |
+| `GET` | `/api/prescriptions/appointment/:appointmentId` | Authenticated | Get prescription for an appointment |
+| `GET` | `/api/prescriptions/patient/:patientId` | Authenticated | Get all prescriptions for a patient |
 
 ### Patients & Medical History (`/api/patients`)
-
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/patients/me` | Patient | Get authenticated patient profile |
-| `PUT` | `/api/patients/me/profile` | Patient | Update personal medical profile details |
-| `GET` | `/api/patients/:id/history` | Authenticated | Get chronological medical history (ownership protected) |
+| `GET` | `/api/patients/me` | Patient | Get current patient profile |
+| `PUT` | `/api/patients/me/profile` | Patient | Update personal medical profile |
+| `GET` | `/api/patients/:id/history` | Authenticated | Get medical history (ownership protected) |
 | `GET` | `/api/patients` | Admin / Doctor | List registered patients |
 
 ### Billing (`/api/billing`)
-
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
 | `GET` | `/api/billing/:id` | Authenticated | Get billing invoice details |
-| `GET` | `/api/billing/patient/:patientId` | Authenticated | Get all invoices for a patient |
-| `POST` | `/api/billing` | Admin | Manually generate billing record |
-| `PATCH` | `/api/billing/:id` | Admin | Update billing payment status and method |
+| `GET` | `/api/billing/patient/:patientId` | Authenticated | Get invoices for a patient |
+| `POST` | `/api/billing` | Admin | Create billing invoice |
+| `PATCH` | `/api/billing/:id` | Admin | Update payment status (`Pending` → `Paid`) |
 
 ### Notifications (`/api/notifications`)
-
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/notifications` | Authenticated | Get user notifications and unread count |
-| `PATCH` | `/api/notifications/:id/read` | Authenticated | Mark single notification as read |
-| `PATCH` | `/api/notifications/read-all` | Authenticated | Mark all user notifications as read |
+| `GET` | `/api/notifications` | Authenticated | Get notifications and unread count |
+| `PATCH` | `/api/notifications/:id/read` | Authenticated | Mark notification as read |
+| `PATCH` | `/api/notifications/read-all` | Authenticated | Mark all notifications as read |
 
 ### Administrative Reports (`/api/admin/reports`)
-
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/admin/reports/appointments` | Admin | Aggregated appointment statistics by period |
-| `GET` | `/api/admin/reports/department-load` | Admin | Department patient volume and workload distribution |
-| `GET` | `/api/admin/reports/doctor-utilization` | Admin | Doctor booking volume and completion rate metrics |
+| `GET` | `/api/admin/reports/appointments` | Admin | Appointment metrics by period |
+| `GET` | `/api/admin/reports/department-load` | Admin | Patient volume across departments |
+| `GET` | `/api/admin/reports/doctor-utilization` | Admin | Doctor booking volume and completion rate |
 
-### System Health (`/api/health`)
-
+### Health Check (`/api/health`)
 | Method | Endpoint | Access | Description |
 | :--- | :--- | :--- | :--- |
-| `GET` | `/api/health` | Public | System status, environment, and uptime timestamp |
+| `GET` | `/api/health` | Public | Check service status and uptime |
 
 ---
 
 ## Business Rules
 
-1. **Appointment Conflict Detection:** A doctor cannot have two active appointments (`Booked` or `Confirmed`) that overlap on the same date and time. Any booking attempt with conflicting times returns HTTP `409 APPOINTMENT_CONFLICT`.
-2. **Availability Schedule Validation:** A doctor's weekly availability slots cannot overlap with another slot on the same weekday. Slot start times must strictly precede end times.
-3. **Controlled Status Workflow:** Appointments adhere to an enforced state machine:
+1. **Appointment Conflicts:** A doctor cannot have overlapping active bookings (`Booked` or `Confirmed`) at the same date and time. Conflicting attempts return HTTP `409 APPOINTMENT_CONFLICT`.
+2. **Availability Slot Overlaps:** A doctor's availability slots cannot overlap on the same day of the week, and start times must precede end times.
+3. **Appointment Status Workflow:** Appointments follow valid state transitions:
    - `Booked` → `Confirmed` or `Cancelled`
    - `Confirmed` → `Completed`, `Cancelled`, or `No-show`
-   - `Completed`, `Cancelled`, and `No-show` are terminal states; no further transitions are allowed.
-4. **Prescription Eligibility:** Digital prescriptions can only be created for appointments that have reached the `Completed` status. Only the attending doctor may issue the prescription, and an appointment can have at most one prescription.
-5. **Medical History Protection:** Patient medical records are strictly protected. A patient can only retrieve their own history. Cross-patient data access attempts return HTTP `403 OWNERSHIP_VIOLATION`.
-6. **Automated Consultation Billing:** When an appointment transitions to `Completed`, the system automatically generates a consultation billing invoice with status `Pending`, matching the doctor's set fee.
-7. **Role-Based Access Control:** Middleware validates JWT tokens and ensures users have the necessary privileges (`Patient`, `Doctor`, or `Admin`) before executing protected routes.
+   - Terminal states (`Completed`, `Cancelled`, `No-show`) cannot be modified further.
+4. **Prescription Eligibility:** Digital prescriptions can only be created for appointments in `Completed` status. Only the attending doctor may issue the prescription.
+5. **Medical History Ownership:** Patients can only access their own medical history. Unauthorized access attempts return HTTP `403 OWNERSHIP_VIOLATION`.
+6. **Automated Billing:** Marking an appointment as `Completed` automatically generates a consultation billing invoice with status `Pending`.
+7. **Role-Based Protection:** Protected endpoints enforce user role checks (`Patient`, `Doctor`, `Admin`) at the route layer.
 
 ---
 
 ## Database Collections & Relationships
 
-The MongoDB database is organized into 8 collections. Weekly doctor availability slots are embedded directly inside the `doctors` collection.
+The system uses 8 Mongoose collections. Doctor weekly availability slots are embedded directly inside the `doctors` collection.
 
 ```mermaid
 erDiagram
@@ -421,16 +344,16 @@ erDiagram
     APPOINTMENT ||--o{ NOTIFICATION : "triggers"
 ```
 
-### Collections Reference
+### Collections Summary
 
-- **`users`:** Core user credentials, roles (`Patient`, `Doctor`, `Admin`), contact details, and account status.
-- **`patients`:** Patient demographics, date of birth, blood group, medical notes, address, and emergency contact information.
-- **`doctors`:** Doctor credentials linked to `users` and `departments`, qualifications, experience, consultation fee, and embedded weekly availability schedules.
-- **`departments`:** Hospital departments (Cardiology, Neurology, Orthopedics, Pediatrics, General Medicine).
-- **`appointments`:** Visit records linking patients and doctors with dates, time slots, status (`Booked`, `Confirmed`, `Completed`, `Cancelled`, `No-show`), and clinical notes.
-- **`prescriptions`:** Clinical prescriptions linked to completed appointments, containing structured medication items, diagnosis, and physician notes.
-- **`billing`:** Consultation invoices linked to appointments, recording fee amounts, payment methods, and statuses (`Pending`, `Paid`, `Cancelled`).
-- **`notifications`:** User-facing notifications for booking confirmations, reminders, status updates, and prescription issuances.
+- **`users`:** Accounts, hashed credentials, roles (`Patient`, `Doctor`, `Admin`), and contact details.
+- **`patients`:** Patient demographics, date of birth, blood group, medical notes, address, and emergency contact.
+- **`doctors`:** Doctor profiles, department links, qualifications, fees, and embedded weekly availability slots.
+- **`departments`:** Hospital departments (e.g., Cardiology, Neurology, Orthopedics).
+- **`appointments`:** Booked visits linking patients and doctors with date, time slot, status, and cancellation notes.
+- **`prescriptions`:** Clinical prescriptions for completed appointments with medicine lists, dosages, and diagnosis.
+- **`billing`:** Consultation fee invoices linked to appointments with payment statuses (`Pending`, `Paid`, `Cancelled`).
+- **`notifications`:** User notification logs for booking confirmations, reminders, and prescription issuances.
 
 ---
 
@@ -439,18 +362,18 @@ erDiagram
 ```
 Hospital-Patient-And-Appointment-Management-System-L-and-T-Group-Project/
 ├── config/
-│   ├── db.js                     # MongoDB connection & embedded memory-server fallback
+│   ├── db.js                     # MongoDB connection & embedded fallback
 │   └── env.js                    # Environment variable configuration
 ├── controllers/
-│   ├── appointmentController.js  # Booking engine, conflict detection, workflow
-│   ├── authController.js         # Register, Login, Current User
-│   ├── billingController.js      # Invoicing & payment updates
-│   ├── departmentController.js   # Department CRUD operations
+│   ├── appointmentController.js  # Booking, conflict checks, status transitions
+│   ├── authController.js         # Authentication, registration, current user
+│   ├── billingController.js      # Invoicing and payment status updates
+│   ├── departmentController.js   # Department management
 │   ├── doctorController.js       # Doctor profiles, search, availability slots
-│   ├── notificationController.js # Notification retrieval & read markers
-│   ├── patientController.js      # Patient profile & chronological medical history
+│   ├── notificationController.js # Notifications retrieval & read markers
+│   ├── patientController.js      # Patient profiles & chronological medical history
 │   ├── prescriptionController.js # Prescription generation & retrieval
-│   └── reportController.js       # MongoDB aggregation reports
+│   └── reportController.js       # Administrative aggregation reports
 ├── middleware/
 │   ├── auth.js                   # JWT token authentication
 │   ├── authorize.js              # Role-based & ownership authorization
@@ -468,12 +391,12 @@ Hospital-Patient-And-Appointment-Management-System-L-and-T-Group-Project/
 ├── postman/
 │   └── P02-Hospital-System.postman_collection.json # Exported Postman collection
 ├── public/
-│   ├── app.js                    # Frontend dynamic application logic
-│   ├── index.html                # Responsive web interface
-│   └── style.css                 # Application styling
+│   ├── app.js                    # Frontend client-side logic
+│   ├── index.html                # Single-page web interface
+│   └── style.css                 # Interface styles
 ├── routes/
 │   ├── appointmentRoutes.js      # Appointment endpoints
-│   ├── authRoutes.js             # Auth endpoints
+│   ├── authRoutes.js             # Authentication endpoints
 │   ├── billingRoutes.js          # Billing endpoints
 │   ├── departmentRoutes.js       # Department endpoints
 │   ├── doctorRoutes.js           # Doctor endpoints
@@ -511,34 +434,33 @@ Hospital-Patient-And-Appointment-Management-System-L-and-T-Group-Project/
 ## Testing
 
 ### Automated Test Suite
-The automated test suite uses Jest and Supertest to execute 40 unit and integration tests covering all major application flows:
+Run the full automated test suite containing 40 integration tests with Jest:
 
 ```bash
 npm test
 ```
 
-Test coverage includes:
-- User registration, duplicate email handling, and input validation
-- Login verification, invalid password rejection, and missing token handling
-- Department creation permissions and public directory access
-- Doctor profile creation, availability updates, and slot overlap prevention
+Covers:
+- User registration, duplicate email handling, and validation errors
+- Login authentication, password verification, and token generation
+- Department management and public directory access
+- Doctor profiles, availability slot updates, and slot overlap rejection
 - Appointment booking with conflict rejection on overlapping slots
-- Status workflow state transitions (`Booked` → `Confirmed` → `Completed`)
-- Invalid status transition rejections
+- Status workflow transitions (`Booked` → `Confirmed` → `Completed`) and invalid transition rejection
 - Prescription generation restrictions (Doctor only, Completed appointments only)
 - Patient medical history ownership protection (`403 OWNERSHIP_VIOLATION`)
-- Automatic billing generation and payment updates
+- Automatic billing creation and payment status updates
 - In-app notification creation and mark-as-read functionality
 - Administrative aggregation reports and non-admin access restrictions
 
 ### Live API Verification
-To execute live end-to-end API verification tests against a running server:
+To execute live end-to-end verification against a running server:
 
 ```bash
-# 1. Start the server
+# Terminal 1: Start server
 npm start
 
-# 2. In another terminal, run verification
+# Terminal 2: Run verification script
 npm run verify
 ```
 
@@ -546,15 +468,15 @@ npm run verify
 
 ## Postman Collection
 
-A complete Postman collection is provided in the repository:
+An importable Postman collection is available at:
 `postman/P02-Hospital-System.postman_collection.json`
 
 ### Usage:
-1. Start the application (`npm start`).
-2. Open **Postman** and click **Import**.
+1. Start the server (`npm start`).
+2. In **Postman**, click **Import**.
 3. Select `postman/P02-Hospital-System.postman_collection.json`.
-4. The collection includes pre-configured environment variables (`baseUrl = http://localhost:5000/api`).
-5. Run requests sequentially or execute the collection runner.
+4. The collection is configured with default environment variables (`baseUrl = http://localhost:5000/api`).
+5. Execute requests individually or run the complete collection runner.
 
 ---
 
@@ -562,37 +484,20 @@ A complete Postman collection is provided in the repository:
 
 | Problem | Cause | Solution |
 | :--- | :--- | :--- |
-| `MongoDB Connection Error` | Local MongoDB daemon is not running | Start local MongoDB service (`mongod`), verify `MONGO_URI` in `.env`, or allow the built-in development fallback to initialize in development mode. |
-| `Port 5000 already in use` | Another process is occupying port 5000 | Change `PORT` in `.env` (e.g., `PORT=5001`) or terminate the conflicting process. |
-| `401 Unauthorized` | Missing, expired, or invalid JWT token | Log in via `/api/auth/login` to obtain a fresh token and pass it in the `Authorization: Bearer <token>` header. |
+| `MongoDB Connection Error` | Local MongoDB daemon is not running | Ensure MongoDB is running locally, verify `MONGO_URI` in `.env`, or allow the embedded development fallback to initialize in development mode. |
+| `Port 5000 already in use` | Another process is occupying port 5000 | Update `PORT` in `.env` (e.g., `PORT=5001`) or stop the competing process. |
+| `401 Unauthorized` | Missing or invalid JWT token | Log in via `/api/auth/login` to obtain a fresh token and pass it in the `Authorization: Bearer <token>` header. |
 | `403 Forbidden` / `OWNERSHIP_VIOLATION` | Insufficient role permissions or accessing another user's records | Verify your user role matches the required operation (`Admin`, `Doctor`, or `Patient`) or check record ownership. |
-| `409 APPOINTMENT_CONFLICT` | Overlapping appointment for the selected doctor | Choose a different time slot or date when the doctor has no active bookings. |
+| `409 APPOINTMENT_CONFLICT` | Overlapping appointment for the selected doctor | Select a different time slot or date when the doctor has no active bookings. |
 | `409 OVERLAPPING_SLOTS` | Doctor availability slots overlap on the same day | Ensure availability slot start and end times do not intersect on the same day. |
-| Empty database records | Database has not been seeded | Run `npm run seed` to generate demonstration data. |
-
----
-
-## Security
-
-- **Password Hashing:** Passwords are salted and hashed using `bcryptjs` (salt rounds: 12) before persistence.
-- **JWT Authorization:** Stateless authentication using cryptographically signed JSON Web Tokens with configurable expiration.
-- **Role-Based Access Control:** Strict route authorization ensuring users access only endpoints permitted for their role.
-- **Ownership Protection:** Patient medical records, history, and prescriptions are protected by user ID matching checks.
-- **Input Validation:** Request sanitization and validation using `express-validator` across all write operations.
-- **Environment Isolation:** Secrets and configuration are loaded exclusively via environment variables; `.env` is excluded from source control.
+| Database is empty | Database has not been seeded | Run `npm run seed` to generate demonstration data. |
 
 ---
 
 ## Contributions
 
 This project was developed collaboratively across four main areas:
-- **Core Setup & Scheduling:** Patient authentication, doctor and department management, doctor availability schedules, and appointment booking.
-- **Clinical Workflow:** Appointment status workflow management, digital prescriptions, patient medical history, and department directory.
-- **Supporting Services & Reporting:** In-app notifications, consultation billing, doctor search, administrative reports, and role-based access control.
-- **Integration & Documentation:** Database schema design, API testing, Postman collection, documentation, and system integration.
-
----
-
-## License
-
-This project is licensed under the [ISC License](package.json).
+- **Core Setup & Scheduling:** Patient authentication, patient registration, doctor and department management, doctor availability, and appointment booking.
+- **Clinical Workflow:** Appointment status workflow, digital prescriptions, medical history, and department/specialization directory.
+- **Supporting Services & Reporting:** Notifications, billing, doctor search, reports, and role-based access control.
+- **Integration & Documentation:** Database schema, API/Postman testing, documentation, and system integration.
