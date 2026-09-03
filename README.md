@@ -44,7 +44,7 @@ cd Hospital-Patient-And-Appointment-Management-System-L-and-T-Group-Project
 # Install dependencies
 npm install
 
-# Configure environment variables
+# Create environment file
 # Windows (CMD): copy .env.example .env
 # Windows (PowerShell): Copy-Item .env.example .env
 # macOS / Linux: cp .env.example .env
@@ -67,7 +67,7 @@ Access points:
 
 - **Node.js:** v18.0.0 or higher
 - **npm:** v9.0.0 or higher
-- **MongoDB:** v5.0+ or the built-in development fallback
+- **MongoDB:** v5.0+ local server, MongoDB Atlas, or the built-in development fallback
 - **Git:** v2.30 or higher
 
 ---
@@ -85,16 +85,28 @@ Access points:
    npm install
    ```
 
+3. Create your `.env` configuration:
+   ```bash
+   # Windows (CMD)
+   copy .env.example .env
+
+   # Windows (PowerShell)
+   Copy-Item .env.example .env
+
+   # macOS / Linux
+   cp .env.example .env
+   ```
+
 ---
 
 ## Environment Variables
 
-Copy `.env.example` to `.env` and configure variables as needed:
+Configure parameters in `.env`:
 
 | Variable | Default Value | Description |
 | :--- | :--- | :--- |
 | `PORT` | `5000` | Port on which the HTTP server listens |
-| `MONGO_URI` | `mongodb://localhost:27017/hospital_management` | MongoDB connection connection string |
+| `MONGO_URI` | `mongodb://localhost:27017/hospital_management` | MongoDB connection string |
 | `JWT_SECRET` | `your_jwt_secret_key_change_in_production` | Secret key for signing JSON Web Tokens |
 | `JWT_EXPIRES_IN` | `1d` | Expiration window for issued JWT tokens |
 | `NODE_ENV` | `development` | Application environment (`development` or `production`) |
@@ -103,22 +115,122 @@ Copy `.env.example` to `.env` and configure variables as needed:
 
 ## Database Setup
 
-The application connects to MongoDB using `MONGO_URI` defined in `.env`.
+The application uses MongoDB. You can run it with local MongoDB, MongoDB Atlas, or the built-in development fallback.
 
-- **Standard MongoDB:** Connects to any local or remote MongoDB instance (e.g., `mongodb://localhost:27017/hospital_management`).
-- **Development Fallback:** In development mode (`NODE_ENV=development`), if no running MongoDB server is detected at `MONGO_URI`, `config/db.js` automatically initializes an embedded in-memory MongoDB instance (`mongodb-memory-server`). This allows local testing without a pre-installed database service.
+### Option 1: Local MongoDB (Recommended for Local Development)
+Make sure MongoDB is running before starting the application when using local MongoDB.
+
+- **Windows:**
+  - If installed as a Windows service:
+    ```powershell
+    # PowerShell (Run as Administrator)
+    Start-Service MongoDB
+    # or in Command Prompt:
+    net start MongoDB
+    ```
+  - If running manually via executable:
+    ```bash
+    mongod
+    ```
+- **macOS / Linux:**
+  - The exact command depends on how MongoDB was installed:
+    ```bash
+    # macOS (Homebrew)
+    brew services start mongodb-community
+
+    # Linux (systemd)
+    sudo systemctl start mongod
+    ```
+- **Verify it is running:**
+  MongoDB normally listens on `mongodb://localhost:27017`. You can test connection with `mongosh` (MongoDB Shell):
+  ```bash
+  mongosh
+  ```
+  In your `.env`, set:
+  ```env
+  MONGO_URI=mongodb://localhost:27017/hospital_management
+  ```
+  This tells the application to connect to the `hospital_management` database on your local server.
+
+### Option 2: MongoDB Atlas (Cloud)
+1. Create a free cluster on [MongoDB Atlas](https://www.mongodb.com/atlas).
+2. Create a database user with password.
+3. Whitelist your current IP address (or `0.0.0.0/0` for development).
+4. Copy the connection string and paste it into `.env`:
+   ```env
+   MONGO_URI=mongodb+srv://<username>:<password>@cluster0.example.mongodb.net/hospital_management?retryWrites=true&w=majority
+   ```
+
+### Option 3: Development Fallback
+In development mode (`NODE_ENV=development`), if no local MongoDB instance is running on `MONGO_URI`, `config/db.js` automatically starts an embedded, in-memory MongoDB instance (`mongodb-memory-server`). This allows immediate local exploration without installing a database server.
+
+---
+
+## How to Run
+
+Follow this startup sequence:
+
+```
+Install Node.js + MongoDB ──► Clone Repository ──► npm install ──► Create .env ──► Start MongoDB ──► npm run seed ──► npm start ──► Open http://localhost:5000/
+```
+
+> **Note:** MongoDB and the Node.js application are separate processes. When using local MongoDB, start MongoDB first, then run the commands below in your project folder.
+
+### Step 1 — Clone the repository
+```bash
+git clone https://github.com/jessesuniljs1-collab/Hospital-Patient-And-Appointment-Management-System-L-and-T-Group-Project.git
+cd Hospital-Patient-And-Appointment-Management-System-L-and-T-Group-Project
+```
+
+### Step 2 — Install dependencies
+```bash
+npm install
+```
+
+### Step 3 — Create `.env`
+```bash
+# Windows CMD
+copy .env.example .env
+
+# Windows PowerShell
+Copy-Item .env.example .env
+
+# macOS / Linux
+cp .env.example .env
+```
+
+### Step 4 — Start MongoDB
+Ensure your MongoDB service is running (see [Database Setup](#database-setup) above) or configure your MongoDB Atlas URI in `.env`.
+
+### Step 5 — Seed the database
+```bash
+npm run seed
+```
+This populates demonstration departments, user accounts, doctors, availability schedules, appointments, prescriptions, billing, and notifications.
+
+### Step 6 — Start the application
+```bash
+# Standard production-style start
+npm start
+
+# Or development mode with auto-reload on file changes
+npm run dev
+```
+
+### Step 7 — Open the application
+- **Frontend Interface:** [http://localhost:5000/](http://localhost:5000/)
+- **API Base:** [http://localhost:5000/api](http://localhost:5000/api)
+- **Health Check:** [http://localhost:5000/api/health](http://localhost:5000/api/health)
 
 ---
 
 ## Seed Data
 
-Populate the database with sample departments, doctors, availability schedules, patients, visits, prescriptions, billing records, and notifications:
-
 ```bash
 npm run seed
 ```
 
-### Demo Accounts
+### Demonstration Accounts
 
 | Role | Email | Password | Details |
 | :--- | :--- | :--- | :--- |
@@ -132,15 +244,15 @@ npm run seed
 
 ## Demo
 
-Follow this workflow to test the end-to-end system:
+Follow this workflow in your browser:
 
 1. **Start the server:** Run `npm start` and open [http://localhost:5000/](http://localhost:5000/).
-2. **Search doctors:** Browse specialists on the landing page or filter by specialization.
+2. **Search doctors:** Browse specialists on the home page or filter by specialization.
 3. **Sign in as Patient:** Click `🧑 John Doe (Patient 1)` in the quick demo banner.
-4. **Book an appointment:** Choose a doctor, pick a date and an available time slot, and submit.
+4. **Book an appointment:** Choose a doctor, select an available date/time slot, and confirm.
 5. **Sign in as Doctor:** Switch to `🩺 Dr. Sharma (Cardio)`, go to **Doctor Desk**, confirm the booking, and mark it `Completed`.
-6. **Issue prescription:** In Doctor Desk, enter medications and diagnosis for the completed visit.
-7. **View patient history & billing:** Switch back to Patient to review the issued prescription, updated medical history, and generated consultation invoice.
+6. **Issue prescription:** In Doctor Desk, enter medication dosage and diagnosis for the completed visit.
+7. **View patient history & billing:** Switch back to Patient to review the prescription, updated medical history, and generated consultation invoice.
 8. **Admin reports & billing:** Switch to `🔑 Admin` to view aggregation analytics under **Admin & Reports** and mark billing as `Paid`.
 
 ---
@@ -484,8 +596,9 @@ An importable Postman collection is available at:
 
 | Problem | Cause | Solution |
 | :--- | :--- | :--- |
-| `MongoDB Connection Error` | Local MongoDB daemon is not running | Ensure MongoDB is running locally, verify `MONGO_URI` in `.env`, or allow the embedded development fallback to initialize in development mode. |
-| `Port 5000 already in use` | Another process is occupying port 5000 | Update `PORT` in `.env` (e.g., `PORT=5001`) or stop the competing process. |
+| MongoDB is not running | Local MongoDB service has not been started | Start MongoDB first (`net start MongoDB` on Windows or `brew services start mongodb-community` on macOS), then run `npm start`. |
+| Cannot connect to MongoDB | Service is stopped, `MONGO_URI` is wrong, or port 27017 is blocked | Verify MongoDB is running, check `MONGO_URI` in `.env`, and confirm port 27017 is open. |
+| `Port 5000 already in use` | Another process is occupying port 5000 | Update `PORT` in `.env` (e.g., `PORT=5001`), then access [http://localhost:5001/](http://localhost:5001/). |
 | `401 Unauthorized` | Missing or invalid JWT token | Log in via `/api/auth/login` to obtain a fresh token and pass it in the `Authorization: Bearer <token>` header. |
 | `403 Forbidden` / `OWNERSHIP_VIOLATION` | Insufficient role permissions or accessing another user's records | Verify your user role matches the required operation (`Admin`, `Doctor`, or `Patient`) or check record ownership. |
 | `409 APPOINTMENT_CONFLICT` | Overlapping appointment for the selected doctor | Select a different time slot or date when the doctor has no active bookings. |
