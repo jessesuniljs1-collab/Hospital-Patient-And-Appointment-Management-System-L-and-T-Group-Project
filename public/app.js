@@ -104,8 +104,8 @@ function switchTab(viewId) {
   if (viewId === 'adminTab') loadAdminReports();
 }
 
-// Quick 1-Click Demo Login
-async function quickLogin(email, password) {
+// Standard User Authentication (JWT)
+async function loginUser(email, password) {
   try {
     const res = await fetch(`${API_BASE}/auth/login`, {
       method: 'POST',
@@ -114,7 +114,7 @@ async function quickLogin(email, password) {
     });
 
     const data = await res.json();
-    if (!res.ok) throw new Error(data.message || 'Login failed');
+    if (!res.ok) throw new Error(data.message || 'Authentication failed');
 
     currentToken = data.data.token;
     currentUser = data.data.user;
@@ -122,12 +122,12 @@ async function quickLogin(email, password) {
     localStorage.setItem('token', currentToken);
     localStorage.setItem('user', JSON.stringify(currentUser));
 
-    showToast(`Logged in as ${currentUser.name} (${currentUser.role})`, 'success');
+    showToast(`Signed in successfully as ${currentUser.name} (${currentUser.role})`, 'success');
     updateAuthUI();
     fetchProfile();
     fetchUnreadNotificationsCount();
 
-    // Automatically navigate to role-relevant tab
+    // Route to role-specific dashboard
     if (currentUser.role === 'Doctor') {
       switchTab('doctorPortalTab');
     } else if (currentUser.role === 'Admin') {
@@ -135,18 +135,23 @@ async function quickLogin(email, password) {
     } else {
       switchTab('appointmentsTab');
     }
+    return true;
   } catch (err) {
     showToast(err.message, 'error');
+    return false;
   }
 }
 
-// Regular Login
+// Regular Login Submission
 async function handleLogin(e) {
   e.preventDefault();
-  const email = document.getElementById('loginEmail').value;
+  const email = document.getElementById('loginEmail').value.trim();
   const password = document.getElementById('loginPassword').value;
-  await quickLogin(email, password);
-  closeAuthModal();
+  const success = await loginUser(email, password);
+  if (success) {
+    closeAuthModal();
+    document.getElementById('loginForm').reset();
+  }
 }
 
 // Registration
@@ -508,6 +513,8 @@ async function cancelAppointment(apptId) {
   await updateApptStatus(apptId, 'Cancelled');
 }
 
+let currentDoctorProfile = null;
+
 // 4. Doctor Clinical Portal (Module 3, 5, 6)
 async function loadDoctorPortal() {
   if (!currentToken || currentUser.role !== 'Doctor') return;
@@ -520,10 +527,11 @@ async function loadDoctorPortal() {
     const data = await res.json();
     if (res.ok && data.data.profile) {
       const doc = data.data.profile;
+      currentDoctorProfile = doc;
       const container = document.getElementById('doctorSlotsDisplay');
       if (doc.availabilitySlots && doc.availabilitySlots.length > 0) {
         container.innerHTML = doc.availabilitySlots.map(s => `
-          <div class="slot-item mb-2">
+          <div class="slot-tag" style="margin: 0.2rem; display: inline-block;">
             <strong>${s.day}</strong>: ${s.startTime} - ${s.endTime}
           </div>
         `).join('');
@@ -578,6 +586,75 @@ async function loadDoctorPortal() {
     }).join('');
   } catch (err) {
     tbody.innerHTML = `<tr><td colspan="5" class="text-danger">${err.message}</td></tr>`;
+  }
+}
+
+// Doctor Availability Slot Management (Module 3)
+function openAvailabilityModal() {
+  if (!currentDoctorProfile) {
+    showToast('Doctor profile not loaded yet. Please wait...', 'warning');
+    return;
+  }
+  const container = document.getElementById('availabilitySlotsContainer');
+  container.innerHTML = '';
+  const slots = currentDoctorProfile.availabilitySlots || [];
+  if (slots.length === 0) {
+    addAvailabilityRow({ day: 'Monday', startTime: '09:00', endTime: '13:00' });
+  } else {
+    slots.forEach(s => addAvailabilityRow(s));
+  }
+  document.getElementById('availabilityModal').classList.remove('hidden');
+}
+
+function closeAvailabilityModal() {
+  document.getElementById('availabilityModal').classList.add('hidden');
+}
+
+function addAvailabilityRow(slot = { day: 'Monday', startTime: '09:00', endTime: '13:00' }) {
+  const container = document.getElementById('availabilitySlotsContainer');
+  const div = document.createElement('div');
+  div.className = 'availability-row';
+  div.innerHTML = `
+    <select class="avail-day">
+      ${['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'].map(d => `<option value="${d}" ${d === slot.day ? 'selected' : ''}>${d}</option>`).join('')}
+    </select>
+    <input type="text" class="avail-start" placeholder="09:00" value="${slot.startTime || '09:00'}" pattern="^([01]\\d|2[0-3]):([0-5]\\d)$" required>
+    <input type="text" class="avail-end" placeholder="13:00" value="${slot.endTime || '13:00'}" pattern="^([01]\\d|2[0-3]):([0-5]\\d)$" required>
+    <button type="button" class="btn btn-xs btn-outline" onclick="this.parentElement.remove()" title="Remove Slot">&times;</button>
+  `;
+  container.appendChild(div);
+}
+
+async function handleSaveAvailability(e) {
+  e.preventDefault();
+  if (!currentDoctorProfile) return;
+
+  const rows = document.querySelectorAll('#availabilitySlotsContainer .availability-row');
+  const availabilitySlots = Array.from(rows).map(r => ({
+    day: r.querySelector('.avail-day').value,
+    startTime: r.querySelector('.avail-start').value,
+    endTime: r.querySelector('.avail-end').value
+  }));
+
+  try {
+    const res = await fetch(`${API_BASE}/doctors/${currentDoctorProfile._id}/slots`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${currentToken}`
+      },
+      body: JSON.stringify({ availabilitySlots })
+    });
+
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.message || 'Failed to update availability');
+
+    showToast('Availability slots updated successfully!', 'success');
+    closeAvailabilityModal();
+    loadDoctorPortal();
+    loadDoctors();
+  } catch (err) {
+    showToast(err.message, 'error');
   }
 }
 

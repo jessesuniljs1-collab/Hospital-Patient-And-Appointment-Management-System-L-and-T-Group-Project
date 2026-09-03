@@ -242,18 +242,18 @@ npm run seed
 
 ---
 
-## Demo
+## Demo Workflow
 
-Follow this workflow in your browser:
+Follow this standard clinical workflow in your browser:
 
 1. **Start the server:** Run `npm start` and open [http://localhost:5000/](http://localhost:5000/).
-2. **Search doctors:** Browse specialists on the home page or filter by specialization.
-3. **Sign in as Patient:** Click `🧑 John Doe (Patient 1)` in the quick demo banner.
-4. **Book an appointment:** Choose a doctor, select an available date/time slot, and confirm.
-5. **Sign in as Doctor:** Switch to `🩺 Dr. Sharma (Cardio)`, go to **Doctor Desk**, confirm the booking, and mark it `Completed`.
-6. **Issue prescription:** In Doctor Desk, enter medication dosage and diagnosis for the completed visit.
-7. **View patient history & billing:** Switch back to Patient to review the prescription, updated medical history, and generated consultation invoice.
-8. **Admin reports & billing:** Switch to `🔑 Admin` to view aggregation analytics under **Admin & Reports** and mark billing as `Paid`.
+2. **Search doctors:** Browse specialists on the home page or filter by specialization or department.
+3. **Sign in as Patient:** Click **Sign In** and enter `patient1@example.com` / `Patient@123`.
+4. **Book an appointment:** Choose a specialist, review available consultation hours, select an appointment slot, and confirm booking.
+5. **Sign in as Doctor:** Click **Logout**, click **Sign In**, and enter `dr.sharma@hospital.com` / `Doctor@123`. Go to **Doctor Desk**, review the booking, click **Confirm Booking**, and mark it **Completed**.
+6. **Issue prescription:** In **Doctor Desk**, click **Issue Prescription** and enter clinical diagnosis, medications, and instructions.
+7. **View patient history & billing:** Sign back in as Patient to review the digital prescription, chronological medical history, and generated consultation billing invoice.
+8. **Admin reports & analytics:** Sign in as Admin (`admin@hospital.com` / `Admin@123`) to view real-time MongoDB aggregation analytics under **Admin & Reports** (department load, doctor utilization, and visit statistics).
 
 ---
 
