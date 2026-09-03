@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediPulse | Hospital Patient & Appointment Management System</title>
+  <meta name="description" content="P02 Advanced Hospital Patient & Appointment Management System with multi-department scheduling, digital prescriptions, billing, and reports.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Global Header -->
+  <header class="navbar">
+    <div class="nav-container">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+          </svg>
+        </div>
+        <div>
+          <span class="brand-title">MediPulse</span>
+          <span class="brand-badge">P02 Hospital System</span>
+        </div>
+      </div>
+
+      <div class="nav-tabs" id="navTabs">
+        <button class="nav-link active" data-tab="searchTab">Doctors</button>
+        <button class="nav-link" data-tab="departmentsTab">Departments</button>
+        <button class="nav-link auth-required hidden" data-tab="appointmentsTab" id="appointmentsNav">Appointments</button>
+        <button class="nav-link auth-required hidden" data-tab="historyTab" id="historyNav">Medical History</button>
+        <button class="nav-link auth-required hidden" data-tab="doctorPortalTab" id="doctorNav">Doctor Desk</button>
+        <button class="nav-link auth-required hidden" data-tab="adminTab" id="adminNav">Admin & Reports</button>
+      </div>
+
+      <div class="user-controls">
+        <div id="unauthControls">
+          <button class="btn btn-outline" id="loginBtn">Sign In</button>
+          <button class="btn btn-primary" id="registerBtn">Register Patient</button>
+        </div>
+        <div id="authControls" class="hidden">
+          <button class="icon-btn" id="notificationsBtn" title="Notifications">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+              <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+            </svg>
+            <span class="badge-count hidden" id="unreadBadge">0</span>
+          </button>
+          <div class="user-pill">
+            <div class="user-avatar" id="userInitial">U</div>
+            <div class="user-info">
+              <span class="user-name" id="navUserName">User</span>
+              <span class="user-role" id="navUserRole">Patient</span>
+            </div>
+          </div>
+          <button class="btn btn-sm btn-ghost" id="logoutBtn">Logout</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Demo Credential Quick-Switch Banner -->
+  <div class="demo-banner">
+    <div class="demo-container">
+      <span class="demo-label">⚡ 1-Click CIA-3 Evaluator Login:</span>
+      <div class="demo-buttons">
+        <button class="demo-chip" onclick="quickLogin('admin@hospital.com', 'Admin@123')">🔑 Admin</button>
+        <button class="demo-chip" onclick="quickLogin('dr.sharma@hospital.com', 'Doctor@123')">🩺 Dr. Sharma (Cardio)</button>
+        <button class="demo-chip" onclick="quickLogin('dr.patel@hospital.com', 'Doctor@123')">🧠 Dr. Patel (Neuro)</button>
+        <button class="demo-chip" onclick="quickLogin('patient1@example.com', 'Patient@123')">🧑 John Doe (Patient 1)</button>
+        <button class="demo-chip" onclick="quickLogin('patient2@example.com', 'Patient@123')">👩 Sarah Smith (Patient 2)</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="main-content">
+    <!-- View 1: Search Doctors & Directory -->
+    <section id="searchTab" class="view active">
+      <div class="hero-section">
+        <h1>Find Specialists & Book Consultations</h1>
+        <p>Browse verified hospital doctors, real-time availability slots, and schedule appointments without double booking.</p>
+        <div class="search-bar">
+          <input type="text" id="searchSpecialization" placeholder="Specialization (e.g. Cardiology, Neurology)...">
+          <input type="text" id="searchDepartment" placeholder="Department name...">
+          <button class="btn btn-primary" onclick="loadDoctors()">Search Doctors</button>
+          <button class="btn btn-outline" onclick="resetDoctorSearch()">Reset</button>
+        </div>
+      </div>
+
+      <div class="section-title-row">
+        <h2>Hospital Specialists Directory</h2>
+        <span class="badge" id="doctorCountBadge">0 Doctors Available</span>
+      </div>
+      <div class="doctor-grid" id="doctorGrid">
+        <div class="loading-spinner">Loading doctors...</div>
+      </div>
+    </section>
+
+    <!-- View 2: Departments Directory -->
+    <section id="departmentsTab" class="view">
+      <div class="section-header">
+        <div>
+          <h2>Hospital Departments</h2>
+          <p>State-of-the-art medical departments and specialty care units.</p>
+        </div>
+      </div>
+      <div class="department-grid" id="departmentGrid">
+        <div class="loading-spinner">Loading departments...</div>
+      </div>
+    </section>
+
+    <!-- View 3: Appointments (Patient & General) -->
+    <section id="appointmentsTab" class="view">
+      <div class="section-header">
+        <div>
+          <h2>Appointment Scheduling & Management</h2>
+          <p>Book appointments with conflict-checked time slots and monitor workflow status.</p>
+        </div>
+        <button class="btn btn-primary" id="openBookModalBtn" onclick="openBookModal()">+ Book New Appointment</button>
+      </div>
+
+      <div class="table-card">
+        <div class="table-header">
+          <h3>Your Appointments</h3>
+          <div class="filter-group">
+            <select id="appointmentStatusFilter" onchange="loadAppointments()">
+              <option value="">All Statuses</option>
+              <option value="Booked">Booked</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Completed">Completed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table" id="appointmentsTable">
+            <thead>
+              <tr>
+                <th>Doctor / Dept</th>
+                <th>Patient</th>
+                <th>Date & Slot</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="appointmentsList">
+              <tr><td colspan="6" class="text-center">Loading appointments...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- View 4: Patient Medical History -->
+    <section id="historyTab" class="view">
+      <div class="section-header">
+        <div>
+          <h2>Personal Medical History</h2>
+          <p>Chronological record of clinical visits, doctor prescriptions, and consultation billing.</p>
+        </div>
+      </div>
+      <div class="history-container" id="historyContainer">
+        <div class="loading-spinner">Loading medical history...</div>
+      </div>
+    </section>
+
+    <!-- View 5: Doctor Portal / Desk -->
+    <section id="doctorPortalTab" class="view">
+      <div class="section-header">
+        <div>
+          <h2>Doctor Clinical Portal</h2>
+          <p>Manage weekly consultation slots, confirm patient bookings, and issue digital prescriptions.</p>
+        </div>
+      </div>
+
+      <div class="doctor-dashboard-grid">
+        <div class="card">
+          <div class="card-header">
+            <h3>My Weekly Availability Slots</h3>
+            <button class="btn btn-sm btn-outline" onclick="openAvailabilityModal()">Edit Slots</button>
+          </div>
+          <div class="card-body" id="doctorSlotsDisplay">
+            <p class="text-muted">Loading availability slots...</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Quick Actions</h3>
+          </div>
+          <div class="card-body quick-actions-body">
+            <p><strong>Clinical Workflow Rules:</strong></p>
+            <ul class="workflow-checklist">
+              <li>✅ Confirm new <code>Booked</code> appointments</li>
+              <li>✅ Mark appointments as <code>Completed</code> after consultation</li>
+              <li>✅ Issue digital prescriptions only for <code>Completed</code> visits</li>
+              <li>💳 Billing is automatically created upon visit completion</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="table-card mt-4">
+        <div class="table-header">
+          <h3>Doctor Appointments Workflow Desk</h3>
+        </div>
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Patient Name</th>
+                <th>Date & Time</th>
+                <th>Reason</th>
+                <th>Status</th>
+                <th>Workflow Actions</th>
+              </tr>
+            </thead>
+            <tbody id="doctorApptList">
+              <tr><td colspan="5" class="text-center">Loading doctor appointments...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- View 6: Admin Dashboard & Reports -->
+    <section id="adminTab" class="view">
+      <div class="section-header">
+        <div>
+          <h2>Hospital Administrative Dashboard & Analytics</h2>
+          <p>Real-time MongoDB aggregation reports on appointment loads, department traffic, and doctor utilization.</p>
+        </div>
+      </div>
+
+      <!-- KPI Summary Cards -->
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span class="kpi-label">Total Appointments</span>
+          <span class="kpi-value" id="kpiTotalAppts">-</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Completed Visits</span>
+          <span class="kpi-value" id="kpiCompleted">-</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Confirmed Upcoming</span>
+          <span class="kpi-value" id="kpiConfirmed">-</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-label">Cancellations</span>
+          <span class="kpi-value" id="kpiCancelled">-</span>
+        </div>
+      </div>
+
+      <!-- Aggregation Charts / Tables -->
+      <div class="admin-grid mt-4">
+        <div class="card">
+          <div class="card-header">
+            <h3>Department Load Analysis</h3>
+            <span class="badge badge-purple">MongoDB Aggregation</span>
+          </div>
+          <div class="card-body">
+            <div id="deptLoadContainer">Loading department load...</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3>Doctor Utilization & Completion Rates</h3>
+            <span class="badge badge-purple">MongoDB Aggregation</span>
+          </div>
+          <div class="card-body">
+            <div id="doctorUtilContainer">Loading doctor utilization...</div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modals -->
+  <!-- Auth Modal (Sign In / Register) -->
+  <div class="modal-overlay hidden" id="authModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 id="authModalTitle">Sign In to MediPulse</h3>
+        <button class="modal-close" onclick="closeAuthModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="loginFormContainer">
+          <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" id="loginEmail" required placeholder="name@example.com">
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" id="loginPassword" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+          </form>
+          <div class="form-switch">
+            Don't have an account? <a href="javascript:void(0)" onclick="toggleAuthForm('register')">Register as Patient</a>
+          </div>
+        </div>
+
+        <div id="registerFormContainer" class="hidden">
+          <form id="registerForm" onsubmit="handleRegister(event)">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="regName" required placeholder="John Doe">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" id="regEmail" required placeholder="john@example.com">
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="regPhone" placeholder="+91 9876543210">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Password (Min 6 chars, 1 uppercase, 1 number)</label>
+              <input type="password" id="regPassword" required placeholder="SecurePassword@123">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Date of Birth</label>
+                <input type="date" id="regDob" required>
+              </div>
+              <div class="form-group">
+                <label>Gender</label>
+                <select id="regGender" required>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Blood Group</label>
+                <select id="regBloodGroup">
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Known Medical Allergies / Notes</label>
+              <textarea id="regNotes" rows="2" placeholder="e.g. Allergy to Penicillin, asthma..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">Complete Registration</button>
+          </form>
+          <div class="form-switch">
+            Already registered? <a href="javascript:void(0)" onclick="toggleAuthForm('login')">Sign In</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Book Appointment Modal -->
+  <div class="modal-overlay hidden" id="bookModal">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>Schedule Doctor Consultation</h3>
+        <button class="modal-close" onclick="closeBookModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="bookForm" onsubmit="handleBookAppointment(event)">
+          <div class="form-group">
+            <label>Select Specialist</label>
+            <select id="bookDoctorSelect" required onchange="onDoctorSelectChange()">
+              <option value="">Choose a Doctor...</option>
+            </select>
+          </div>
+          <div id="doctorSlotsNotice" class="slot-notice-box hidden"></div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Appointment Date</label>
+              <input type="date" id="bookDate" required onchange="updateDayNotice()">
+            </div>
+            <div class="form-group">
+              <label>Slot Start Time (HH:MM)</label>
+              <input type="text" id="bookStartTime" placeholder="09:30" required pattern="^([01]\d|2[0-3]):([0-5]\d)$">
+            </div>
+            <div class="form-group">
+              <label>Slot End Time (HH:MM)</label>
+              <input type="text" id="bookEndTime" placeholder="10:00" required pattern="^([01]\d|2[0-3]):([0-5]\d)$">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Reason for Visit / Symptoms</label>
+            <textarea id="bookReason" rows="2" placeholder="Describe symptoms or follow-up reason..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Confirm Appointment Booking</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Prescription Modal -->
+  <div class="modal-overlay hidden" id="prescriptionModal">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-header">
+        <h3>Issue Digital Prescription</h3>
+        <button class="modal-close" onclick="closePrescriptionModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="prescriptionForm" onsubmit="handleIssuePrescription(event)">
+          <input type="hidden" id="prescApptId">
+          <div class="form-group">
+            <label>Clinical Diagnosis</label>
+            <input type="text" id="prescDiagnosis" placeholder="e.g. Acute Bronchitis" required>
+          </div>
+          <div class="form-group">
+            <div class="d-flex justify-between items-center mb-2">
+              <label>Prescribed Medicines</label>
+              <button type="button" class="btn btn-xs btn-outline" onclick="addMedicineRow()">+ Add Medicine</button>
+            </div>
+            <div id="medicineRowsContainer">
+              <div class="medicine-row">
+                <input type="text" placeholder="Medicine Name (e.g. Paracetamol)" class="med-name" required>
+                <input type="text" placeholder="Dosage (500mg)" class="med-dose" required>
+                <input type="text" placeholder="Freq (Twice daily)" class="med-freq" required>
+                <input type="text" placeholder="Duration (5 days)" class="med-dur" required>
+                <input type="text" placeholder="Instructions (After meals)" class="med-inst">
+              </div>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Doctor Advice & Follow-up Notes</label>
+            <textarea id="prescNotes" rows="2" placeholder="Rest, avoid cold food, review after 1 week..."></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Sign & Issue Prescription</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notifications Drawer -->
+  <div class="drawer-overlay hidden" id="notificationsDrawer">
+    <div class="drawer">
+      <div class="drawer-header">
+        <h3>Your Notifications</h3>
+        <div>
+          <button class="btn btn-xs btn-ghost" onclick="markAllNotificationsRead()">Mark all read</button>
+          <button class="modal-close" onclick="closeNotificationsDrawer()">&times;</button>
+        </div>
+      </div>
+      <div class="drawer-body" id="notificationsList">
+        <div class="loading-spinner">Loading notifications...</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
