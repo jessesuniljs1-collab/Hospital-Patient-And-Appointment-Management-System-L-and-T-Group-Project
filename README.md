@@ -34,6 +34,19 @@ A full-stack hospital patient and appointment management system built with Node.
 
 ---
 
+## Contributors
+
+| Contributor | Main Contributions |
+|---|---|
+| **JESSE SUNIL** | Patient authentication, doctor & department management, doctor availability, and appointment booking |
+| **ISHA ZAARA ZAFEER** | Appointment workflow, digital prescriptions, medical history, and department/specialization directory |
+| **JESSICA NALINI PAULLY** | Notifications, billing, doctor search, admin reports, and role-based access control |
+| **KASTURI S** | Database schema design, Postman/API testing, documentation, and presentation consolidation |
+
+> The project was developed collaboratively, with the work organized across the main functional, workflow, reporting, database, testing, and documentation areas listed above.
+
+---
+
 ## Quick Start
 
 ```bash
